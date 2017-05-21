@@ -35,7 +35,7 @@ from ib.ext.Order import Order
 from ib.ext.ComboLeg import ComboLeg
 
 from .utils import (
-    dataTypes, createLogger, local_to_utc, static_var
+    dataTypes, createLogger, local_to_utc, static_var,gen_tables
 )
 
 import copy
@@ -311,9 +311,10 @@ class ezIBpy():
             self.handleConnectionClosed(msg)
 
         elif msg.typeName == dataTypes["MSG_TYPE_MANAGED_ACCOUNTS"]:
-            self.accountCode = msg.accountsList
-            print('account code', self.accountCode)
-
+            pass
+            #don't update account code here we will use separate process
+            #self.accountCode = msg.accountsList
+            #print('account code', self.accountCode)
         elif msg.typeName == dataTypes["MSG_COMMISSION_REPORT"]:
             self.commission = msg.commissionReport.m_commission
 
@@ -527,7 +528,7 @@ class ezIBpy():
 
         # log handler msg
         self.log_msg("position", msg)
-
+        # print("position",msg)
         # contract identifier
         contract_tuple = self.contract_to_tuple(msg.contract)
         contractString = self.contractString(contract_tuple)
@@ -572,9 +573,10 @@ class ezIBpy():
             "realizedPNL":   float(msg.realizedPNL),
             "account":       msg.accountName
         }
-
+        #print("portfolio msg", msg)
         # fire callback
-        self.ibCallback(caller="handlePortfolio", msg=msg)
+        table = gen_tables(self.portfolio[contractString])
+        self.ibCallback(caller="handlePortfolio", msg=msg, table=table)
 
     # -----------------------------------------
     def handleOrders(self, msg):

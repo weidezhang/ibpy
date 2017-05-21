@@ -254,3 +254,10 @@ def static_var(varname, value):
         setattr(func, varname, value)
         return func
     return decorate
+
+def gen_tables(dict):
+    table = []
+    tablemeta = list(dict.keys())
+    tablecontent =list(dict.values())
+    table = [tablemeta, tablecontent]
+    return table

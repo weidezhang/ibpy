@@ -15,12 +15,14 @@ ibConn_ = ezibpy.ezIBpy()
 def ibCallback(caller, msg, table=None, **kwargs):
     if table is None:
         return
-    if caller is "handleAccount":
+    if caller in ["handleAccount", "handlePortfolio"]:
+        print("\n", caller)
         prettytable.pprint_table(sys.stdout, table)
 
 def initConnection():
     global ibConn_
     # connect to IB (7496/7497 = TWS, 4001 = IBGateway)
+    ibConn_.accountCode = 'xxxxxxx'
     ibConn_.connect(clientId=100, host="localhost", port=7496)
 
 def initCallback():
